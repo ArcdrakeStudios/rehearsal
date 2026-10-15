@@ -32,6 +32,34 @@ try{
    assert.match(await page.locator('#cards').innerText(),/SPF nennt zulässige Versanddienste/);
    assert.match(await page.locator('#cards').innerText(),/Selektor erforderlich/);assert.equal(dnsQueries,0);
  }
+ // Exercise full removal consequences, including user text that resembles UI copy.
+ if(app==='rehearsal'){
+   const removal=await context.newPage();
+   try{
+     for(const count of [0,1,3]){
+       await removal.goto('http://local.test/?lang=de');
+       const title='Keep current event — Remove "New step"?';
+       const plan={version:1,title:'User event: Save / Remove',start:'18:00',people:[],steps:[{id:'source',title,duration:5,people:[],depends:[],notes:''},...Array.from({length:count},(_,i)=>({id:`dependent-${i}`,title:`User step ${i}`,duration:5,people:[],depends:['source'],notes:''}))]};
+       await removal.locator('#import').setInputFiles({name:'removal.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:1,plan,simulation:{delayStep:'',delay:0,unavailable:''}}))});
+       await removal.locator('#confirm-action').waitFor({state:'visible'});
+       await removal.locator('#confirm-accept').click();
+       await removal.locator('[data-id="source"] [data-remove]').waitFor();
+       await removal.locator('[data-id="source"] [data-remove]').click();
+       const consequence=count===0?'':count===1?' Ein anderer Schritt wartet danach nicht mehr darauf.':` ${count} andere Schritte warten danach nicht mehr darauf.`;
+       await removal.waitForFunction(expected=>document.getElementById('confirm-message').textContent===expected,`${title} aus der Veranstaltung entfernen?${consequence} Die Browserspeicherung wird dadurch nicht geändert.`);
+       assert.equal(await removal.locator('#title').inputValue(),plan.title);
+       assert.equal(await removal.locator('[data-id="source"] [data-field="title"]').inputValue(),title);
+       await removal.locator('#confirm-cancel').click();
+       assert.equal(await removal.locator('.step').count(),count+1);
+       await removal.locator('[data-id="source"] [data-remove]').click();
+       await removal.locator('#confirm-accept').click();
+       await removal.locator('[data-id="source"]').waitFor({state:'detached'});
+       assert.equal(await removal.locator('.step').count(),count);
+       assert.equal(await removal.locator('[data-dependency="source"]').count(),0);
+       assert.equal(await removal.locator('#title').inputValue(),plan.title);
+     }
+   }finally{await removal.close();}
+ }
  const snapshot=()=>page.evaluate(()=>({values:[...document.querySelectorAll('input,textarea,select')].map(e=>[e.id,e.value,e.checked,e.disabled]),raw:[...document.querySelectorAll('pre,[data-l10n-raw]:not([data-l10n-raw="false"])')].map(e=>e.textContent)}));
  const before=await snapshot();
  await page.locator('[data-app-language="en"]').click();assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.deepEqual(await snapshot(),before);

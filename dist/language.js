@@ -399,6 +399,18 @@ const entries=[
   "Name von Schritt {0}"
  ],
  [
+  "Remove {0} from the event? 1 other step(s) will stop waiting for it. This does not change your browser save.",
+  "{0} aus der Veranstaltung entfernen? Ein anderer Schritt wartet danach nicht mehr darauf. Die Browserspeicherung wird dadurch nicht geändert."
+ ],
+ [
+  "Remove {0} from the event? {1} other step(s) will stop waiting for it. This does not change your browser save.",
+  "{0} aus der Veranstaltung entfernen? {1} andere Schritte warten danach nicht mehr darauf. Die Browserspeicherung wird dadurch nicht geändert."
+ ],
+ [
+  "Remove {0} from the event? This does not change your browser save.",
+  "{0} aus der Veranstaltung entfernen? Die Browserspeicherung wird dadurch nicht geändert."
+ ],
+ [
   "Remove {0}",
   "{0} entfernen"
  ],
@@ -585,10 +597,6 @@ const entries=[
  [
   "Saved event could not be read. Your current event is still here.",
   "Die gespeicherte Veranstaltung konnte nicht gelesen werden. Deine aktuelle Veranstaltung ist weiterhin vorhanden."
- ],
- [
-  "Remove {0} from the event?{1} This does not change your browser save.",
-  "{0} aus der Veranstaltung entfernen?{1} Die Browserspeicherung wird dadurch nicht geändert."
  ],
  [
   "This event has reached the 100-step limit.",
