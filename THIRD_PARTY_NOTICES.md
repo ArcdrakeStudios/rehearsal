@@ -10,9 +10,9 @@ Node.js and Playwright/Chromium are development/test tools, not included in the
 static release. Their own distributions retain their respective upstream licences.
 Do not copy installed runtimes or browser binaries into a product release.
 
-The root MIT licence records the owner's requested licence for this repository.
-It does not silently replace any licence attached to future third-party material.
-Retain upstream notices and resolve conflicting rights before adding such material.
+Application source is available under the [MIT licence](LICENSE). Retain the
+copyright and licence notices when redistributing it. Dependencies retain their
+own licences.
 
 ## Development dependencies
 
