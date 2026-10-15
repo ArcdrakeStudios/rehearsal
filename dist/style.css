@@ -21,3 +21,5 @@ button.text-link{padding:0;border:0;border-radius:0;background:transparent;text-
  .output{border:0;padding:0;box-shadow:none}
  #print-heading{display:block;font-size:28px;letter-spacing:0}
 }
+
+.language-switch{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}.language-switch button{font:inherit;padding:.35rem .6rem;cursor:pointer}.language-switch button[aria-pressed="true"]{font-weight:700;text-decoration:underline}header{flex-wrap:wrap;gap:1rem}
