@@ -1,6 +1,6 @@
 # Third-party and asset notices
 
-Reviewed 14 October 2026. The application ships no npm dependencies, vendored
+The application ships no npm dependencies, vendored
 libraries, remote scripts, external images or font files. Interface styling and
 textual/glyph branding are project-authored; browser/system fonts provide glyphs.
 The named font fallbacks do not bundle a font or grant rights to external font files.
@@ -10,9 +10,9 @@ Node.js and Playwright/Chromium are development/test tools, not included in the
 static release. Their own distributions retain their respective upstream licences.
 Do not copy installed runtimes or browser binaries into a product release.
 
-The root MIT licence records the owner's requested licence for this repository.
-It does not silently replace any licence attached to future third-party material.
-Retain upstream notices and resolve conflicting rights before adding such material.
+Application source is available under the [MIT licence](LICENSE). Retain the
+copyright and licence notices when redistributing it. Dependencies retain their
+own licences.
 
 ## Development dependencies
 

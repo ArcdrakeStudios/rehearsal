@@ -4,12 +4,11 @@ Arcdrake's local-first run-of-show editor for a single event. Build steps with d
 
 ![Local desktop preview](docs/screenshots/desktop.png)
 
-[Mobile preview](docs/screenshots/mobile.png), captured with synthetic data in local
-Chromium on 14 October 2026. These screenshots do not establish public hosting.
+[Mobile preview](docs/screenshots/mobile.png). Screenshots use synthetic examples.
 
 ## Run locally
 
-Install Node.js 22+ (checks used 24.14.0). No runtime dependencies or package install
+Install Node.js 24 or newer. No runtime dependencies or package install
 are required. From the repository root:
 
 ```sh
@@ -36,8 +35,8 @@ people apply to the whole simulation, not a time range. Independent steps may ov
 Physical print output remains unverified.
 There is no application backend or event upload.
 
-Local Chromium checks cover desktop and 390/320px layouts. Physical-device,
-screen-reader and native Safari/Firefox acceptance remain unverified. The public website launch is separate from this source release.
+Browser tests cover Chromium desktop and 390/320px layouts. Physical devices,
+screen readers, Safari and Firefox have not been tested.
 
 ## Licence and feedback
 
@@ -53,7 +52,7 @@ issues. Do not attach private data or unredacted personal images to public issue
 
 Part of Arcdrake's tools collection. The planned shared home is `tools.arcdrake.com`;
 production hosting is not live as part of this source release. Local use is available
-above. Development checks use Node.js 24, Python 3 and locked Playwright tooling:
+above. Development checks use Node.js 24 and locked Playwright tooling:
 
 ```sh
 npm ci
