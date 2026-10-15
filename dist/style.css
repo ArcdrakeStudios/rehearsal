@@ -26,7 +26,10 @@ button.text-link{padding:0;border:0;border-radius:0;background:transparent;text-
 
 /* Keep translated labels and intrinsic form widths inside narrow screens. */
 @media(max-width:850px){
- .workspace{grid-template-columns:minmax(0,1fr)}
+ .intro,.workspace{grid-template-columns:minmax(0,1fr)}
+ .intro>*,.hero-actions>*{min-width:0;max-width:100%}
+ .intro-copy,.demo{overflow-wrap:anywhere}
+ .hero-actions>*{white-space:normal}
  .workspace>.panel,.section-heading>*,.event-fields>*,.simulation>*,.row>*{min-width:0}
  .section-heading{flex-wrap:wrap}
  .event-fields,.simulation{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
@@ -34,4 +37,7 @@ button.text-link{padding:0;border:0;border-radius:0;background:transparent;text-
  .row{grid-template-columns:100px minmax(0,1fr)}
  .private,.panel{overflow-wrap:anywhere}
 }
-@media(max-width:450px){.event-fields,.simulation{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:450px){
+ .event-fields,.simulation{grid-template-columns:minmax(0,1fr)}
+ header .private{flex-basis:100%;max-width:none;text-align:left;overflow-wrap:normal}
+}
