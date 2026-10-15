@@ -23,3 +23,15 @@ button.text-link{padding:0;border:0;border-radius:0;background:transparent;text-
 }
 
 .language-switch{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}.language-switch button{font:inherit;padding:.35rem .6rem;cursor:pointer}.language-switch button[aria-pressed="true"]{font-weight:700;text-decoration:underline}header{flex-wrap:wrap;gap:1rem}
+
+/* Keep translated labels and intrinsic form widths inside narrow screens. */
+@media(max-width:850px){
+ .workspace{grid-template-columns:minmax(0,1fr)}
+ .workspace>.panel,.section-heading>*,.event-fields>*,.simulation>*,.row>*{min-width:0}
+ .section-heading{flex-wrap:wrap}
+ .event-fields,.simulation{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+ .step-fields{grid-template-columns:90px minmax(0,1fr)}
+ .row{grid-template-columns:100px minmax(0,1fr)}
+ .private,.panel{overflow-wrap:anywhere}
+}
+@media(max-width:450px){.event-fields,.simulation{grid-template-columns:minmax(0,1fr)}}
