@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 
 // Exercise inherited system typography and deliberately wider glyph spacing.
-// The override is served as CSS by the existing local route; CSP stays enabled.
+// The override is served as CSS by the existing local route.
 export async function checkNarrowLayout(page, artifactRoot, setFontCSS) {
  await mkdir(artifactRoot,{recursive:true});
  for(const [name,css] of [['native',''],['wide-arial','*{font-family:Arial,sans-serif!important;letter-spacing:.4px!important}']]){

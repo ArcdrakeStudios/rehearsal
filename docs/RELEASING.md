@@ -1,22 +1,27 @@
-# Release procedure
+# Packaging and hosting
 
-The canonical source is https://github.com/ArcdrakeStudios/rehearsal.
-The planned shared product home is `tools.arcdrake.com`; its production launch is
-separate from source publication. This repository does not automatically deploy.
+[Rehearsal](https://tools.arcdrake.com/rehearsal/) is part of [Arcdrake Tools](https://tools.arcdrake.com/). This repository contains its standalone source. Its workflows check changes and prepare downloadable artifacts; they do not deploy the hosted service.
 
-1. Merge through the protected pull-request workflow with `verify` passing and
-   review findings resolved. Record independent review for an owner-authored PR.
-2. Dispatch **Prepare release artifact** on `main`. The `release` environment
-   requires owner approval and restricts runs to main. It repeats tests and packages
-   the checked-out SHA. The artifact is named with that SHA and retained for 30 days.
-3. Inspect the package manifest/hashes. Download and retain the artifact and manifest
-   in the deployment release archive before GitHub retention expires.
-4. Website deployment belongs to the separate infrastructure workflow. Pin this
-   public commit and artifact hash there; verify routing, security headers and user
-   journeys on the production origin. No credentials or deployment hooks live here.
-5. Keep the previous verified artifact and manifest. Roll back through the same
-   infrastructure workflow to those exact bytes, then check the live product.
+## Build a static package
 
-Do not deploy from a contributor branch, arbitrary tag or local working directory.
-Static host logs and origin-dependent browser behavior require separate deployment
-verification. The initial source publication is not evidence of a live public site.
+Follow the development checks in the [README](../README.md), then run:
+
+```sh
+npm run package:release
+```
+
+The command creates `artifacts/release/` with a `manifest.json` containing per-file SHA-256 hashes.
+
+The application files are `index.html`, `style.css`, `app.js`, `schedule.js` and `language.js`. The package also includes `LICENSE` and `THIRD_PARTY_NOTICES.md`; retain these when redistributing it. Packaging does not download dependencies, upload files or configure hosting.
+
+The **Prepare release artifact** GitHub Actions workflow runs on `main` when dispatched by a maintainer. It repeats the checks and uploads an artifact named with the source commit. GitHub keeps these workflow artifacts for 30 days; they are not permanent release downloads.
+
+## Host your own copy
+
+Serve the package's application files over HTTPS from a static host, preserving relative asset paths. A directory mount must serve its trailing-slash index. Serve the packaged files, not the repository root or development tools.
+
+The standalone app does not include a Content Security Policy. Configure and test one at your host, together with other appropriate security headers, including `X-Content-Type-Options: nosniff` and `Referrer-Policy: no-referrer`. Verify asset loading, scheduling, saving and HTML export on your chosen origin.
+
+Browser saves belong to the current origin. Moving to another host does not transfer an existing save; export JSON from the old location and import it at the new one. Hosting receives ordinary page and asset requests, so describe your host's data processing accurately.
+
+Retain the previous package and manifest if you need to restore an earlier version. Verify the files against the manifest before serving them.
