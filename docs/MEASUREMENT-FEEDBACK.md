@@ -31,7 +31,7 @@ together and update them together; do not replace them with a separate API.
   another tab; check the choice there too. Each event checks the current choice,
   including another tab's persisted opt-out.
 - `POST /api/feedback` sends only product, category (`bug`, `idea`, `usability`,
-  `other`), message and optional `replyTo`. Opening or editing never submits.
+  `other`), message, optional `replyTo` and noticeVersion `2026-10-27-mail-v1`. Opening or editing never submits.
   Sending requires the explicit form action and works while counts are off.
   Messages are trimmed, 1–2000 JavaScript string code units, allowing tabs and
   newlines but rejecting other controls. Optional email must be a trimmed valid
@@ -49,12 +49,11 @@ Arcdrake receives feedback for authorized triage operators and agents. Feedback
 visibility expires after 30 days; hourly purge removes it from active storage
 under normal operation, subject to platform failure. Counts cover the current
 UTC day and previous 89 days. Provider backups/recovery have separate retention;
-authorized exports must be restricted and deleted by feedback expiry or earlier
-on a deletion request. Keep the receipt for deletion requests through the existing
+earlier collected records/exports retain their original deletion commitments. Revised-notice submissions follow the prospective policy below. Keep the receipt for deletion requests through the existing
 contact route. No reply is guaranteed and prior aggregate contributions cannot
 be linked to an individual or removed individually.
 
-The visible notices use the complete shared EN/DE wording. Privacy links are
+The form uses brief EN/DE wording; the full notice is available through its privacy link, and analytics controls live in a separate privacy choices window. Privacy links are
 `https://tools.arcdrake.com/privacy/` and `/de/privacy/`; contact links are
 `https://arcdrake.com/contact/` and `/de/contact/`. These are existing site pages;
 activation must update the host privacy notice to match the optional intake.
@@ -102,3 +101,15 @@ To roll back intake, remove client integration and host forwarding together (or
 return explicit 503), preserving event editing and existing contact/static routes.
 Keep retained-store cleanup running until feedback expires or is deliberately
 deleted; do not delete storage as an incidental rollback.
+
+## Consent and feedback notice update — 27 October 2026
+
+This private source candidate copies the reviewed canonical shared client/contract from consent source `d8c50c8`. Both copied modules are explicitly LF in `.gitattributes` to preserve byte parity across checkouts. No production push, API activation or deployment is included. Local task behavior and privacy gates remain intact.
+
+The feedback area has a short intro and fields; analytics detail and equally usable allow/decline controls live in the separate branded Privacy choices window. Existing EN/DE privacy/contact links remain. The current client adds exact `noticeVersion: "2026-10-27-mail-v1"` to explicit feedback payloads. This identifies its notice version, not proof that a human read it. An old tab/client without the marker remains storage-only forever; it cannot be replayed into mail.
+
+For revised-notice submissions the website working copy still expires after 30 days, with hourly cleanup under normal operation. Feedback also queues for forwarding through the existing Microsoft 365 transport to Arcdrake's business mailbox. Mailbox correspondence is deleted when no longer needed, subject to statutory obligations or necessary legal claims. A saved receipt confirms website storage/queueing, never inbox delivery or a human response. Existing collected records and exports/copies retain the original promises under which they were collected; there is no retroactive exemption or new manual mailbox/export deletion duty.
+
+Host release must first accept the optional marker with `FEEDBACK_MAIL_ACTIVE="0"`, then supply the existing private mail entrypoint/binding and deploy all revised notices/client adapters. Verify service bindings and Operations Control delivery health before explicitly activating dispatch last. Marker-tagged messages queue while off without transport attempts; old/unmarked records remain legacy. Keep the deliberate active setting in later reviewed deployment configs. Standalone builds with a disabled collection switch remain disabled.
+
+Candidate verification: `npm test` passed 26 tests. Shared client/contract byte parity matches the canonical LF Git blobs; source hashes are pinned where required. The local release package/build completed. No browser, physical-device, live backend or inbox verification is claimed by this source-propagation packet.
