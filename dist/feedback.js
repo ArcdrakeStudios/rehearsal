@@ -17,3 +17,6 @@ updateLinks();
 window.addEventListener('arcdrake-language-change', updateLinks);
 window.addEventListener('storage', ui.refreshChoice);
 void measurement.track('page_view');
+
+// Announce the locale selected before this native consent dialog mounted.
+window.dispatchEvent(new CustomEvent('arcdrake-language-change', {detail:{language:getLanguage()}}));
