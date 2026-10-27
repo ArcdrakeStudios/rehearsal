@@ -3,7 +3,7 @@ const {chromium}=await import(process.env.PLAYWRIGHT_MODULE ? pathToFileURL(proc
 await mkdir('artifacts',{recursive:true});const browser=await chromium.launch({headless:true});const context=await browser.newContext({viewport:{width:1440,height:1050},acceptDownloads:true});const page=await context.newPage();const errors=[],passed=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
 try{
  await page.goto('http://127.0.0.1:43147');
-  await page.getByRole('dialog').getByRole('button', {name:/Continue without usage counts|Ohne Nutzungszählung fortfahren/}).click();
+  await page.getByRole('dialog').getByRole('button', {name:/No usage counts|Ohne Nutzungszählung/}).click();
 await page.screenshot({path:'artifacts/desktop.png',fullPage:true});
  assert.equal(await page.locator('.step').count(),5);assert.match(await page.locator('#summary').innerText(),/18:40/);passed.push('five-step example renders');
  await page.locator('#title').fill('Acceptance event');await page.locator('#delayStep').selectOption('demo');await page.locator('#delay').fill('10');assert.match(await page.locator('#summary').innerText(),/18:50/);assert.match(await page.locator('#schedule').innerText(),/\+10 min later than without test changes/);passed.push('ten-minute delay shifts downstream times');
