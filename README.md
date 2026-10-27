@@ -22,7 +22,9 @@ Plan an event, see what a delay changes, and share a run sheet. Rehearsal helps 
 
 ## Privacy and limitations
 
-Event editing and scheduling happen in your browser. There is no application backend or event upload. Saving is manual: **Save in this browser** keeps one event and its simulation in localStorage on the current origin. Clearing browser data removes that save. Download JSON to keep a portable backup; the HTML run sheet is for sharing and printing, not continued editing.
+Event editing and scheduling happen in your browser, without event upload. Saving is manual: **Save in this browser** keeps one event and its simulation in localStorage on the current origin. Clearing browser data removes that save. Download JSON to keep a portable backup; the HTML run sheet is for sharing and printing, not continued editing.
+
+The **Feedback & usage counts** section offers voluntary feedback to Arcdrake and optional daily action counts. Counts default off and respect browser privacy signals. Feedback sends only when you press **Send feedback**; do not include private event details. The standalone local preview has no feedback backend. An unavailable or unconfirmed service preserves your text and does not retry automatically. See [feedback and measurement integration](docs/MEASUREMENT-FEEDBACK.md) for payloads, retention and hosting requirements; including the client does not activate a service.
 
 Independent steps may overlap. Shared people and dependencies constrain scheduling; a person marked unavailable is unavailable for the whole simulation. Physical print output has not been verified. Preview the exported run sheet before relying on a printed copy.
 

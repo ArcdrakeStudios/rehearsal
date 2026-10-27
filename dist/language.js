@@ -1,3 +1,4 @@
+import {NOTICES} from './measurement-feedback-client.mjs';
 // Local, bundled translations. User input and protocol evidence are never translated.
 const KEY='arcdrake-tools-language';
 let language='en';
@@ -851,6 +852,12 @@ const entries=[
   "Veranstaltungsdatei konnte nicht geöffnet werden. Wähle eine bearbeitbare Rehearsal-Datei (.json), keinen HTML-Ablaufplan oder ein PDF. Die aktuelle Veranstaltung bleibt erhalten."
  ]
 ];
+// Shared notices remain mounted: changing language never replaces a feedback draft.
+entries.push(...Object.keys(NOTICES.en).map(key=>[NOTICES.en[key],NOTICES.de[key]]),
+ ...['on','off','blocked'].map(key=>[NOTICES.en[key]+' '+NOTICES.en.pageOnly,NOTICES.de[key]+' '+NOTICES.de.pageOnly]),
+ [NOTICES.en.sent+'{0}',NOTICES.de.sent+'{0}'],
+ ['Feedback & usage counts','Feedback und Nutzungszählung'],
+ ['Feedback requires an available service on this site. If receipt cannot be confirmed, your text stays here; nothing is automatically retried.','Feedback setzt einen verfügbaren Dienst auf dieser Website voraus. Wenn der Empfang nicht bestätigt werden kann, bleibt dein Text hier; es gibt keine automatischen Wiederholungen.']);
 const patterns=entries.filter(([s])=>s.includes('{0}')).map(([s,t])=>[new RegExp('^'+s.split(/(\{\d+\})/).map(v=>/^\{\d+\}$/.test(v)?'(.*?)':v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('')+'$','s'),t]);
 const exact=new Map(entries);
 export function translate(value){const raw=String(value);if(language!=='de')return raw;const s=raw.trim();if(!s)return raw;let output=exact.get(s);if(output===undefined){for(const [pattern,target] of patterns){const match=s.match(pattern);if(match){output=target.replace(/\{(\d+)\}/g,(_,i)=>match[Number(i)+1]);break;}}}return output===undefined?raw:raw.replace(s,()=>output);}

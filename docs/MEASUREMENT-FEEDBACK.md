@@ -1,0 +1,104 @@
+# Optional feedback and action counts
+
+This static candidate includes a voluntary feedback form and a consent-gated
+client. It does not include or activate a backend. The standalone local preview
+cannot accept submissions; an unavailable response leaves the draft visible.
+Receipt confirmation can fail after storage succeeds, so there is no automatic
+resend. Only HTTP 202 with exactly `{ok:true}` for events or `{ok:true,id}` with
+a valid UUIDv4 for feedback confirms server acceptance, not a reply.
+
+The two copied shared modules implement the Arcdrake v1 contract. Keep them
+together and update them together; do not replace them with a separate API.
+
+## Client behavior
+
+- `POST /api/events` sends only `{product:"rehearsal",event}`. Valid event names
+  are `page_view`, `feedback_open`, `tool_start`, `tool_complete`, `play_start`
+  and `play_complete`. Rehearsal uses the first four. Page entry counts only if
+  already opted in. Allowing counts does not replay earlier actions.
+- Committed timing/availability/dependency changes and structural/load/reset
+  actions emit `tool_start`; a valid completed schedule calculation emits
+  `tool_complete`. Live text-entry keystrokes do not emit counts. Invalid schedules emit no completion.
+  Startup and language-only demo redraws do not emit tool events. Counts can
+  repeat during editing; they do not measure unique users, sessions or retention.
+  Measurement failure never stops scheduling or saving.
+- Counts default off. The only analytics preference is `arcdrake.analytics.v1`
+  (`yes`/`no`) in origin-local storage. Off remains available; GPC and DNT `1`
+  override Allow. With denied storage, the choice applies to this page and the UI
+  explains that limitation. Failed opt-out overrides other clients sharing that
+  storage object in the page, with best-effort removal of stale saved permission.
+  If writing and removal both fail, an earlier opt-in can survive reload or in
+  another tab; check the choice there too. Each event checks the current choice,
+  including another tab's persisted opt-out.
+- `POST /api/feedback` sends only product, category (`bug`, `idea`, `usability`,
+  `other`), message and optional `replyTo`. Opening or editing never submits.
+  Sending requires the explicit form action and works while counts are off.
+  Messages are trimmed, 1–2000 JavaScript string code units, allowing tabs and
+  newlines but rejecting other controls. Optional email must be a trimmed valid
+  email shape of at most 254 code units; empty email is omitted. Unknown fields
+  fail validation. Feedback is not saved in browser storage or interpreted as HTML.
+- Event payloads have no identity, event title, people, notes, save contents,
+  URLs, query strings or arbitrary metadata. Sends omit credentials and referrers,
+  reject redirects and never retry. A single 10-second deadline covers fetch and
+  JSON reading; timeout restores controls and preserves the draft. The provider
+  still sees connection metadata.
+
+## Storage and contact notices
+
+Arcdrake receives feedback for authorized triage operators and agents. Feedback
+visibility expires after 30 days; hourly purge removes it from active storage
+under normal operation, subject to platform failure. Counts cover the current
+UTC day and previous 89 days. Provider backups/recovery have separate retention;
+authorized exports must be restricted and deleted by feedback expiry or earlier
+on a deletion request. Keep the receipt for deletion requests through the existing
+contact route. No reply is guaranteed and prior aggregate contributions cannot
+be linked to an individual or removed individually.
+
+The visible notices use the complete shared EN/DE wording. Privacy links are
+`https://tools.arcdrake.com/privacy/` and `/de/privacy/`; contact links are
+`https://arcdrake.com/contact/` and `/de/contact/`. These are existing site pages;
+activation must update the host privacy notice to match the optional intake.
+
+## Hosting integration
+
+Keep the exact root API paths on the publication's own origin, including when
+the tool is mounted under `/rehearsal/`. No local or example hostname is embedded
+as an ingestion endpoint. Configuration belongs to the host; do not introduce a
+public cross-origin collector, wildcard CORS or client credentials.
+
+The hosting Worker forwards the original HTTPS request through the private
+`MEASUREMENT_FEEDBACK` service binding. Missing binding must return 503 JSON,
+never static HTML or a false success. Preserve original URL, Origin and trusted
+Cloudflare connection IP; do not trust invented proxy headers. The backend uses
+an explicit `HOST_PRODUCTS` JSON map of exact HTTPS origins and allowed product
+IDs. For the existing Tools origin the reviewed map includes `tools`, `rehearsal`,
+`redact`, `shrink`, `unpack`, `maildns`. Other self-hosted origins need their own
+exact reviewed entry. Unknown/malformed origins or products fail closed.
+
+Both writes require same-origin POST JSON without query strings, valid UTF-8 and
+a streamed maximum of 12,000 bytes. Errors are `{ok:false,error}` with bounded
+codes: 400 `invalid`, 403 `origin`/`product`, 405 `method`, 413 `size`, 415 `type`,
+429 `rate`, 503 `unavailable`/`capacity`. The client preserves these codes,
+only with their exact HTTP status and response shape, normalizes malformed/network
+responses to unavailable, and does not expose provider details. The UI reports
+unconfirmed receipt and preserves input. Rate/capacity messages describe a service
+limit rather than asking the visitor to change valid input. Page copy describes
+availability neutrally on both standalone and integrated hosts.
+
+Use the reviewed shared Worker/service-store integration, exact host map,
+retention alarm, abuse limits and server-only triage/abuse secrets. Privileged
+triage credentials never belong in public assets, URLs or client configuration.
+This package contains no triage interface or secrets.
+
+Before a separately authorized activation, verify provider allowances and backup
+retention, service binding and original ingress propagation, missing-binding 503,
+unauthenticated triage denial, hourly cleanup, bounded synthetic intake/deletion,
+CSP `connect-src 'self'`, JavaScript MIME types and the final EN/DE host UX. Retain
+the app's language buttons; the reviewed host wrapper hides its duplicate group
+once both app controls are available. Production activation and browser review
+are separate from this static package.
+
+To roll back intake, remove client integration and host forwarding together (or
+return explicit 503), preserving event editing and existing contact/static routes.
+Keep retained-store cleanup running until feedback expires or is deliberately
+deleted; do not delete storage as an incidental rollback.

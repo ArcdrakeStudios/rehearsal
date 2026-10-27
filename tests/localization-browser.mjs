@@ -9,13 +9,16 @@ try{
  const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
  let dnsQueries=0, fontCSS='';
  await context.route('https://cloudflare-dns.com/**',async route=>{dnsQueries++;await route.fulfill({json:{Status:0,Answer:[]}});});
- await context.route('http://local.test/**',async route=>{const name=new URL(route.request().url()).pathname.split('/').pop()||'index.html';const data=await readFile(new URL(name,root));await route.fulfill({body:name.endsWith('.css')?Buffer.concat([data,Buffer.from('\n'+fontCSS)]):data,contentType:name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});});
+ await context.route('http://local.test/**',async route=>{const name=new URL(route.request().url()).pathname.split('/').pop()||'index.html';const data=await readFile(new URL(name,root));await route.fulfill({body:name.endsWith('.css')?Buffer.concat([data,Buffer.from('\n'+fontCSS)]):data,contentType:/\.m?js$/.test(name)?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});});
  await page.goto('http://local.test/?lang=de');await page.locator('[data-app-language="de"]').waitFor();
  assert.equal(await page.locator('html').getAttribute('lang'),'de');
  const app='rehearsal';
  if(app==='rehearsal'){
    assert.match(await page.locator('#purpose').innerText(),/Plane deine Veranstaltung/);
    assert.equal(await page.locator('#title').inputValue(),'Probe der Produkteinführung');
+   assert.match(await page.locator('#demo-result').innerText(),/Live-Produktdemo/);
+   await page.locator('#demo-delay').click();
+   assert.match(await page.locator('#demo-result').innerText(),/Live-Produktdemo · 10 Min\. verspätet/);
    await page.locator('#title').fill('Keep current event');
    await page.locator('#steps textarea').first().fill('Published records');
    await page.locator('#delayStep').selectOption('demo');await page.locator('#delay').fill('10');
@@ -61,13 +64,15 @@ try{
      }
    }finally{await removal.close();}
  }
- const snapshot=()=>page.evaluate(()=>({values:[...document.querySelectorAll('input,textarea,select')].map(e=>[e.id,e.value,e.checked,e.disabled]),raw:[...document.querySelectorAll('pre,[data-l10n-raw]:not([data-l10n-raw="false"])')].map(e=>e.textContent)}));
+ const snapshot=()=>page.evaluate(()=>({values:[...document.querySelectorAll('input,textarea,select')].map(e=>[e.id,e.value,e.checked,e.disabled]),raw:[...document.querySelectorAll('pre,[data-l10n-raw]:not([data-l10n-raw="false"]):not(#demo-result)')].map(e=>e.textContent)}));
  const before=await snapshot();
  await page.locator('[data-app-language="en"]').click();assert.equal(await page.locator('html').getAttribute('lang'),'en');assert.deepEqual(await snapshot(),before);
+ assert.match(await page.locator('#demo-result').innerText(),/Live product demo · 10 min late/);
  assert.match(page.url(),/lang=en/);
  await page.evaluate(()=>window.dispatchEvent(new CustomEvent('arcdrake-language-change',{detail:{language:'de'}})));
  assert.equal(await page.locator('html').getAttribute('lang'),'de');assert.deepEqual(await snapshot(),before);
  assert.equal(await page.evaluate(()=>localStorage.getItem('arcdrake-tools-language')),'de');
+ assert.match(await page.locator('#demo-result').innerText(),/Live-Produktdemo · 10 Min\. verspätet/);
  await mkdir(new URL('../artifacts/localization/',import.meta.url),{recursive:true});
  await writeFile(new URL('../artifacts/localization/german.txt',import.meta.url),await page.locator('body').innerText());
  await page.screenshot({path:new URL('../artifacts/localization/german.png',import.meta.url).pathname.replace(/^\/(\w:)/,'$1'),fullPage:true});
@@ -81,6 +86,6 @@ try{
  await page.goto('http://local.test/?lang=en');assert.equal(await page.locator('html').getAttribute('lang'),'en');
  await page.evaluate(()=>localStorage.setItem('arcdrake-tools-language','de'));await page.goto('http://local.test/');assert.equal(await page.locator('html').getAttribute('lang'),'de');
  await checkNarrowLayout(page,new URL('../artifacts/localization/',import.meta.url),css=>{fontCSS=css;});
- const denied=await context.newPage();await denied.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw Error('Storage denied');}}));await denied.goto('http://local.test/?lang=de');assert.equal(await denied.locator('html').getAttribute('lang'),'de');await denied.close();const german=await browser.newContext({locale:'de-DE'});await german.route('http://local.test/**',async route=>{const name=new URL(route.request().url()).pathname.split('/').pop()||'index.html';await route.fulfill({body:await readFile(new URL(name,root)),contentType:name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});});const native=await german.newPage();await native.goto('http://local.test/');assert.equal(await native.locator('html').getAttribute('lang'),'de');await german.close();
+ const denied=await context.newPage();await denied.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw Error('Storage denied');}}));await denied.goto('http://local.test/?lang=de');assert.equal(await denied.locator('html').getAttribute('lang'),'de');await denied.close();const german=await browser.newContext({locale:'de-DE'});await german.route('http://local.test/**',async route=>{const name=new URL(route.request().url()).pathname.split('/').pop()||'index.html';await route.fulfill({body:await readFile(new URL(name,root)),contentType:/\.m?js$/.test(name)?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});});const native=await german.newPage();await native.goto('http://local.test/');assert.equal(await native.locator('html').getAttribute('lang'),'de');await german.close();
  assert.deepEqual(errors,[]);console.log(app+': German dynamic journey, raw data, EN/DE state retention, shared event, preference/URL precedence, mobile and errors passed.');
 }finally{await browser.close();}

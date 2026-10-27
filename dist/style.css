@@ -24,6 +24,13 @@ button.text-link{padding:0;border:0;border-radius:0;background:transparent;text-
 
 .language-switch{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}.language-switch button{font:inherit;padding:.35rem .6rem;cursor:pointer}.language-switch button[aria-pressed="true"]{font-weight:700;text-decoration:underline}header{flex-wrap:wrap;gap:1rem}
 
+.feedback-panel{margin-top:24px;max-width:900px;overflow-wrap:anywhere}
+.feedback-panel p{font-size:13px;line-height:1.7;color:#526b59}
+.feedback-panel button{margin:4px 8px 4px 0;max-width:100%;white-space:normal}
+.feedback-panel form:not([hidden]){display:grid;gap:14px;margin-top:18px}
+.feedback-panel textarea{min-height:110px}
+.feedback-panel a{color:#244a38;text-underline-offset:3px}
+
 /* Keep translated labels and intrinsic form widths inside narrow screens. */
 @media(max-width:850px){
  .intro,.workspace{grid-template-columns:minmax(0,1fr)}
